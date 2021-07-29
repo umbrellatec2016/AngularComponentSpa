@@ -66,6 +66,9 @@ jobs:
       - run:
           name: Run Build
           command: npm build
+      - initialize:
+                gcloud-service-key: <<parameters.gcloud-service-key>>
+                google-project-id: <<parameters.google-project-id>>
 
 workflows:
   # Below is the definition of your workflow.
