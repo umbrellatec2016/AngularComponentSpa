@@ -27,15 +27,6 @@ commands:
                     # Initialize gcloud CLI
                     gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
                     gcloud --quiet config set project $<<parameters.google-project-id>>
-
-                    if [[ -n $<<parameters.google-compute-zone>> ]]; then
-                      gcloud --quiet config set compute/zone $<<parameters.google-compute-zone>>
-                    elif [[ -n $<<parameters.google-compute-region>> ]]; then
-                      gcloud --quiet config set compute/region $<<parameters.google-compute-region>>
-                    else
-                      echo "ERROR: Set <<parameters.google-compute-zone>> or <<parameters.google-compute-region>> env variable" >&2
-                      exit 1
-                    fi
                 name: Initialize gcloud CLI to connect to Google Cloud
 orbs:
   # The Node.js orb contains a set of prepackaged CircleCI configuration you can utilize
@@ -43,17 +34,31 @@ orbs:
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
   node: circleci/node@4.1
   gcp-cli: circleci/gcp-cli@2.2.0
+  orb-tools: circleci/orb-tools@9.3.1
 
 jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
+  
   build:  
     # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/node
+    
     docker:
       - image: cimg/node:15.1
     # Then run your tests!
     # CircleCI will report the results back to your VCS provider.
+    parameters:
+            gcloud-service-key:
+                default: GCLOUD_SERVICE_KEY
+                description: |
+                    Name of environment variable storing the full service key JSON file
+                    for the Google project.
+                type: env_var_name
+            google-project-id:
+                default: GOOGLE_PROJECT_ID
+                description: The Google project ID to connect with via the gcloud CLI.
+                type: env_var_name
     steps:
       # Checkout the code as the first step.
       - checkout
