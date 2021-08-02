@@ -18,6 +18,9 @@ jobs:
     
     docker:
       - image: cimg/node:15.1
+        auth:
+              username: theconsultingcompany
+              password: $DOCKERHUB_PASSWORD
     # Then run your tests!
     # CircleCI will report the results back to your VCS provider.
     parameters:
@@ -43,9 +46,13 @@ jobs:
       - run:
           name: Run Build
           command: npm build
+          
   deploy:
     docker:
       - image: google/cloud-sdk
+        auth:
+          username: theconsultingcompany
+          password: $DOCKERHUB_PASSWORD
     steps:
       - run:
           command: echo base64 -d $GCLOUD_SERVICE_KEY > credential.json | ls -l
