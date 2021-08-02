@@ -45,7 +45,7 @@ jobs:
       #     pkg-manager: yarn 
       - run:
           name: Run Build
-          command: npm build
+          command: npm build | ls -l
           
   deploy:
     docker:
