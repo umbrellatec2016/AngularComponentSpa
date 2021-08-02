@@ -48,7 +48,7 @@ jobs:
       - image: google/cloud-sdk
     steps:
       - run:
-          command: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account  bucket@formal-wonder-310108.iam.gserviceaccount.com --key-file=- && gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+          command: echo base64 -d $GCLOUD_SERVICE_KEY > credential.json | gcloud auth activate-service-account  bucket@formal-wonder-310108.iam.gserviceaccount.com --key-file=credential.json && gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
           
         
 workflows:
