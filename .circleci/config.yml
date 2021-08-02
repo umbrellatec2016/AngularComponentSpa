@@ -1,48 +1,12 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine. 
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-commands:
-    initialize:
-        description: Initilize the gcloud CLI.
-        parameters:
-            gcloud-service-key:
-                default: GCLOUD_SERVICE_KEY
-                description: |
-                    Name of environment variable storing the full service key JSON file
-                    for the Google project.
-                type: env_var_name
-            google-project-id:
-                default: GOOGLE_PROJECT_ID
-                description: The Google project ID to connect with via the gcloud CLI.
-                type: env_var_name
-        steps:
-            - orb-tools/check-env-var-param:
-                command-name: Checking whether required env vars are set to initialize gcloud CLI...
-                param: <<parameters.gcloud-service-key>>,<<parameters.google-project-id>>
-            - run:
-                command: |
-                    # Store service account
-                    echo $<<parameters.gcloud-service-key>> > ${HOME}/gcloud-service-key.json
 
-                    # Initialize gcloud CLI
-                    gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-                    gcloud --quiet config set project $<<parameters.google-project-id>>
-
-                    if [[ -n $<<parameters.google-compute-zone>> ]]; then
-                      gcloud --quiet config set compute/zone $<<parameters.google-compute-zone>>
-                    elif [[ -n $<<parameters.google-compute-region>> ]]; then
-                      gcloud --quiet config set compute/region $<<parameters.google-compute-region>>
-                    else
-                      echo "ERROR: Set <<parameters.google-compute-zone>> or <<parameters.google-compute-region>> env variable" >&2
-                      exit 1
-                    fi
-                name: Initialize gcloud CLI to connect to Google Cloud
 orbs:
   # The Node.js orb contains a set of prepackaged CircleCI configuration you can utilize
   # Orbs reduce the amount of configuration required for common tasks. 
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
   node: circleci/node@4.1
-  gcp-cli: circleci/gcp-cli@2.2.0
 
 jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
@@ -66,9 +30,13 @@ jobs:
       - run:
           name: Run Build
           command: npm build
-      - initialize:
-                gcloud-service-key: <<parameters.gcloud-service-key>>
-                google-project-id: <<parameters.google-project-id>>
+  deploy:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - run: |
+          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
 
 workflows:
   # Below is the definition of your workflow.
