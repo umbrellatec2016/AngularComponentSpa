@@ -55,7 +55,7 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     steps:
       - run:
-          command: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+          command: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account  bucket@formal-wonder-310108.iam.gserviceaccount.com  --key-file=-
       - run:
           command: ls /circleci -R
           
