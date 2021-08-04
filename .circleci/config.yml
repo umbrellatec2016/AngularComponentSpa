@@ -45,7 +45,7 @@ jobs:
       #     pkg-manager: yarn 
       - run:
           name: Run Build
-          command: npm build | ls -l | pwd
+          command: npm build | ls -l 
           
   deploy:
     docker:
@@ -54,6 +54,8 @@ jobs:
           username: theconsultingcompany
           password: $DOCKERHUB_PASSWORD
     steps:
+      - run:
+          command: echo base64 -d $GCLOUD_SERVICE_KEY > credential.json |  pwd
       - run:
           command: echo base64 -d $GCLOUD_SERVICE_KEY > credential.json |  gcloud auth activate-service-account --key-file=credential.json
           
