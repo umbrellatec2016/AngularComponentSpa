@@ -55,9 +55,9 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     steps:
       - run:
-          command: base64 -d $GCLOUD_SERVICE_KEY > credential.json |  pwd
+          command: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
       - run:
-          command:gcloud auth activate-service-account --key-file=credential.json
+          command: ls /circleci -R
           
           
         
