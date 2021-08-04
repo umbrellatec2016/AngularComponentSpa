@@ -57,7 +57,7 @@ jobs:
       - run:
           command: base64 -d $GCLOUD_SERVICE_KEY > credential.json |  pwd
       - run:
-          command: cat credential.json |  gcloud auth activate-service-account --key-file=credential.json
+          command:gcloud auth activate-service-account --key-file=credential.json
           
           
         
